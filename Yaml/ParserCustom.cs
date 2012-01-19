@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using SquishIt.ConfigCodeLib;
+using SquishIt.Config.CodeLib;
 
-namespace SquishIt.ConfigYaml.Grammar
+namespace SquishIt.Config.Yaml.Grammar
 {
     public partial class YamlParser
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SquishIt.ConfigCodeLib
+namespace SquishIt.Config.CodeLib
 {
     /// <summary>
     /// Pair

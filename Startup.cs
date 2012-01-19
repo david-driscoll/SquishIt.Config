@@ -10,10 +10,10 @@ using System.IO;
 using SquishIt.Framework;
 using System.Collections;
 using SquishIt.Framework.Base;
-using SquishIt.ConfigYaml.Grammar;
+using SquishIt.Config.Yaml.Grammar;
 using System.Web.Mvc;
 
-namespace SqusihIt.Config
+namespace SquishIt.Config
 {
     public enum SquishItForce
     {
@@ -77,19 +77,21 @@ namespace SqusihIt.Config
 
         public void Init()
         {
-            //Bundle.Css().ClearGroupBundlesCache();
-            //Bundle.JavaScript().ClearGroupBundlesCache();
-            Bundle.Css().ClearCache();
-            Bundle.JavaScript().ClearCache();
-
-            var keys = new List<string>();
-            foreach (DictionaryEntry c in HttpRuntime.Cache)
-                if (c.Key is string)
-                    keys.Add(c.Key as string);
-            keys.ForEach(x => HttpRuntime.Cache.Remove(x));
+            var runSetup = false;
+            Settings.ConfigFiles.ForEach(x =>
+            {
+                if (!Settings.LastModified.ContainsKey(x))
+                {
+                    Settings.LastModified.Add(x, File.GetLastWriteTime(x));
+                    runSetup = true;
+                }
+            });
+            if (!runSetup && !Settings.ConfigFiles.Any(x => File.GetLastWriteTime(x) > Settings.LastModified[x]))
+                return;
 
             foreach (var config in Settings.ConfigFiles)
             {
+                Settings.LastModified[config] = File.GetLastWriteTime(config);
                 var groups = ReadConfig.Read(config);
                 foreach (var group in groups)
                 {
@@ -105,6 +107,17 @@ namespace SqusihIt.Config
                     }
                 }
             }
+
+            //Bundle.Css().ClearGroupBundlesCache();
+            //Bundle.JavaScript().ClearGroupBundlesCache();
+            Bundle.Css().ClearCache();
+            Bundle.JavaScript().ClearCache();
+
+            var keys = new List<string>();
+            foreach (DictionaryEntry c in HttpRuntime.Cache)
+                if (c.Key is string)
+                    keys.Add(c.Key as string);
+            keys.ForEach(x => HttpRuntime.Cache.Remove(x));
 
             foreach (var bundle in configBundles)
             {
@@ -130,7 +143,7 @@ namespace SqusihIt.Config
             {
                 configBundles.Add(cacheName, new ConfigBundle<T>(Settings)
                 {
-                    Name = cacheName,
+                    Name = group.Key,
                     Config = group,
                     Bundle = bundle,
                 });

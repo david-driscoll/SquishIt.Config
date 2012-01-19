@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SquishIt.ConfigYaml.Grammar;
+using SquishIt.Config.Yaml.Grammar;
 
-namespace SqusihIt.Config
+namespace SquishIt.Config
 {
     class ReadConfig
     {

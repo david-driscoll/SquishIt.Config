@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SqusihIt.Config
+namespace SquishIt.Config
 {
     public class Settings
     {
+        public Settings()
+        {
+            LastModified = new Dictionary<string, DateTime>();
+        }
+
         public virtual string[] ConfigFiles { get; set; }
+        public virtual IDictionary<string, DateTime> LastModified { get; set; }
 
         private string _javaScriptPath = "~/Scripts";
         public virtual string JavaScriptPath
@@ -21,6 +27,7 @@ namespace SqusihIt.Config
                 _javaScriptPath = value;
             }
         }
+        public virtual string JavaScriptRelativePath { get { return _javaScriptPath.Substring(1); } }
 
         private string _cssPath = "~/Content";
         public virtual string CssPath
@@ -34,6 +41,7 @@ namespace SqusihIt.Config
                 _cssPath = value;
             }
         }
+        public virtual string CssRelativePath { get { return _cssPath.Substring(1); } }
 
         private string _assetsPath = "~/Assets/";
         public virtual string AssetsPath
@@ -47,6 +55,7 @@ namespace SqusihIt.Config
                 _assetsPath = value;
             }
         }
+        public virtual string AssetsRelativePath { get { return _assetsPath.Substring(1); } }
 
         public virtual SquishItCache CacheMode { get; set; }
     }

@@ -9,7 +9,7 @@ using SquishIt.Config.Extensions;
 using System.Web.Mvc;
 using SquishIt.Framework.JavaScript;
 
-namespace SqusihIt.Config
+namespace SquishIt.Config
 {
     public class ConfigBundle<T> : ConfigBundle
         where T : SquishIt.Framework.Base.BundleBase<T>
@@ -51,14 +51,15 @@ namespace SqusihIt.Config
             var cacheMode = GetCacheMode();
             var extension = GetBundleExtension();
             var path = GetBundlePath();
+            var key = Name.ToLower();
             ForceBundle(force);
 
             if (cacheMode == SquishItCache.Cached)
-                Bundle.AsCached(Name, String.Format("{0)/{1}/{2}", _settings.AssetsPath, extension, Name));
+                Bundle.AsCached(key, String.Format("{0)/{1}/{2}", _settings.AssetsPath, extension, key));
             else if (cacheMode == SquishItCache.Named && HttpContext.Current.IsDebuggingEnabled || cacheMode == SquishItCache.NamedDynamic)
-                Bundle.AsNamed(Name, String.Format("{0}/{1}.squishit.{2}", path, Name, extension));
+                Bundle.AsNamed(key, String.Format("{0}/{1}.squishit.{2}", path, key, extension));
             else if (cacheMode == SquishItCache.Named && !HttpContext.Current.IsDebuggingEnabled || cacheMode == SquishItCache.NamedStatic)
-                Bundle.AsNamed(Name, String.Format("{0}/{1}.#.squishit.{2}", path, Name, extension));
+                Bundle.AsNamed(key, String.Format("{0}/{1}.#.squishit.{2}", path, key, extension));
             if (!IsCached)
                 IsCached = true;
         }
@@ -79,13 +80,14 @@ namespace SqusihIt.Config
             var cacheMode = GetCacheMode();
             var extension = GetBundleExtension();
             var path = GetBundlePath();
+            var key = Name.ToLower();
             if (cacheMode == SquishItCache.Cached)
             {
-                return Bundle.RenderCachedAssetTag(Name);
+                return Bundle.RenderCachedAssetTag(key);
             }
             else if (cacheMode == SquishItCache.Named || cacheMode == SquishItCache.NamedDynamic || cacheMode == SquishItCache.NamedStatic)
             {
-                var cacheKey = String.Format("{0}/{1}.#.squishit.{2}", path, Name, extension);
+                var cacheKey = String.Format("{0}/{1}.#.squishit.{2}", path, key, extension);
                 if (cacheMode == SquishItCache.Named && HttpContext.Current.IsDebuggingEnabled || cacheMode == SquishItCache.NamedDynamic)
                     cacheKey = cacheKey.Replace(".#", "");
 

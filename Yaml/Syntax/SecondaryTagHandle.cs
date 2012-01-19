@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SquishIt.ConfigYaml.Grammar
+namespace SquishIt.Config.Yaml.Grammar
 {
     public partial class SecondaryTagHandle : TagHandle
     {

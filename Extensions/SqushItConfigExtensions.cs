@@ -9,9 +9,9 @@ using System.Web.Mvc;
 using SquishIt.Framework.Base;
 using SquishIt.Framework.Css;
 using SquishIt.Framework.JavaScript;
-using SquishIt.ConfigYaml.Grammar;
+using SquishIt.Config.Yaml.Grammar;
 using System.Collections;
-using SqusihIt.Config;
+using SquishIt.Config;
 using System.Reflection;
 
 namespace SquishIt.Config.Extensions
@@ -20,24 +20,23 @@ namespace SquishIt.Config.Extensions
     {
         private static Startup Startup = null;
 
-        private static MvcHtmlString IncludeResource<T>(string format, bool mobile, string key, SquishItForce force)
+        private static MvcHtmlString IncludeResource<T>(string format, bool mobile, SquishItForce force)
             where T : SquishIt.Framework.Base.BundleBase<T>
         {
             if (Startup == null)
                 Startup = Startup.StaticStartup();
 
-            key = String.Format(format, key).ToLower();
-            return Startup.GetBundle<T>(key, mobile, force) as MvcHtmlString;
+            return Startup.GetBundle<T>(format.ToLower(), mobile, force) as MvcHtmlString;
         }
 
         private static MvcHtmlString JavaScript(bool mobile, string key, SquishItForce force = SquishItForce.None)
         {
-            return IncludeResource<JavaScriptBundle>("js-{0}", mobile, key, force);
+            return IncludeResource<JavaScriptBundle>(String.Format("JavaScript-{0}", key), mobile, force);
         }
 
         public static MvcHtmlString Css(bool mobile, string key, SquishItForce force = SquishItForce.None)
         {
-            return IncludeResource<CSSBundle>("css-{0}", mobile, key, force);
+            return IncludeResource<CSSBundle>(String.Format("Css-{0}", key), mobile, force);
         }
 
         public static MvcHtmlString JavaScript(this HtmlHelper helper, string key, SquishItForce force = SquishItForce.None)

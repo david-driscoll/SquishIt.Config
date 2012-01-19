@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace SquishIt.ConfigCodeLib
+namespace SquishIt.Config.CodeLib
 {
     /// <summary>
     /// This class represents a String Helper.

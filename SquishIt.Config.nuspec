@@ -8,7 +8,7 @@
 		<description>$description$</description>
 		<language>en-US</language>
 		<licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-		<projectUrl>https://github.com/david-driscoll/SquishIt.Config</projectUrl>
+		<projectUrl>https://github.com/david-driscoll/SquishIt.Config.</projectUrl>
 		<dependencies>
 			<dependency id="WebActivator" />
 			<dependency id="SquishIt" />
@@ -16,6 +16,7 @@
 	</metadata>
 	<files>
 		<file src="App_Start\SquishitConfig.cs.pp" target="Content\App_Start" />
+		
 		<file src="Controllers\AssetsController.cs.pp" target="Content\Controllers" />
 	</files>
 </package>

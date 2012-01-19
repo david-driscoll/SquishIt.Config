@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SquishIt.ConfigYaml.Grammar
+namespace SquishIt.Config.Yaml.Grammar
 {
     public class TextInput : ParserInput<char>
     {

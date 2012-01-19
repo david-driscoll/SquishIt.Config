@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SquishIt.ConfigYaml.Grammar
+namespace SquishIt.Config.Yaml.Grammar
 {
     /// <summary>
     /// How line breaks after last non empty line in block scalar are handled.

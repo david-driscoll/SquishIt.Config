@@ -1,12 +1,12 @@
 [assembly: WebActivator.PostApplicationStartMethod(typeof($rootnamespace$.App_Start.SquishItConfigStartup), "PostStart")]
-using SqusihIt.Config;
+using SquishIt.Config.;
 namespace $rootnamespace$.App_Start {
     public static class SquishItConfigStartup {
         public static void PostStart() {
-            SqusihIt.Config.Startup.Load(new SqusihIt.Config.Settings()
+            SquishIt.Config.Startup.Load(new SquishIt.Config.Settings()
 			{
 				ConfigFiles = new string[] {
-					String.Format("{0}{1}", System.AppDomain.CurrentDomain.BaseDirectory, "squishit.config.yaml")
+					String.Format("{0}{1}", System.AppDomain.CurrentDomain.BaseDirectory, "SquishIt.Config.yaml")
 				},
 			});
 		}
