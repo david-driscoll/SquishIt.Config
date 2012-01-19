@@ -47,9 +47,6 @@
     <Reference Include="SquishIt.Framework">
       <HintPath>packages\SquishIt.0.8.4\lib\SquishIt.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="SquishIt.Mvc">
-      <HintPath>packages\SquishIt.Mvc.0.8.4\lib\SquishIt.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity.Design" />
@@ -111,13 +108,11 @@
     <None Include="Controllers\AssetsController.cs.pp" />
     <Compile Include="Extensions\SqushItConfigExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="SquishIt.Config.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Start\SquishitConfig.cs.pp" />
     <None Include="packages.config" />
-    <None Include="SquishItConfig.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="squishit.config.yaml" />
