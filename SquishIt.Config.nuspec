@@ -15,10 +15,7 @@
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="bin\Release\SquishIt.Config.dll" target="lib" />
-		<file src="bin\Release\SquishIt.Config.pdb" target="lib" />
 		<file src="App_Start\SquishitConfig.cs.pp" target="Content\App_Start" />
-		<file src="squishit.config.yaml" target="Content\squishit.config.yaml" />
 		<file src="Controllers\AssetsController.cs.pp" target="Content\Controllers" />
 	</files>
 </package>
