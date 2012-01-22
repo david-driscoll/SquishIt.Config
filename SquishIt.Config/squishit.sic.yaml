@@ -1,0 +1,98 @@
+﻿#---------------------------------------------------------------------#
+#   SquishIt.Config. Sample Config File                                #
+#---------------------------------------------------------------------#
+#  The following file setups up various squishit asset groups.        #
+#  Inspired by the xml config of combres, but also trying to expand   #
+#    upon it and create a highly configurable asset grouping system.  #
+#---------------------------------------------------------------------#
+#  -- File Structure --                                               #
+#  [GroupName]: - The group name, unique per type (css or js)         #
+#    Type: [js|css] - The type this resource group is defined for     #
+#    Files: - The files that are included in this resource group      #
+#               Can be either a file or another resource group.       #
+#      - ~/Scripts/mysite.js - Included a file                        #
+#      - LibraryResources - Include a resource group                  #
+#      - Js-Debug | Js-Release - Signifies javascript for debugging   #
+#          or release. ie Modernizer development vs built package     #
+#    Minify: [true|false] - Toggle minification on or off             #
+#    Mode: [release|debug] - Toggles squishing on or off              #
+#    Cache: [memory|file] - Tells squishit how to cache.              #
+#       Memory uses the HttpRuntimeCache, File is normal squishit     #
+#---------------------------------------------------------------------#
+## Javascript Resources ##
+Main:
+  Type: js
+  Files:
+    - Library
+    - Common
+    - Backbone
+
+Main:
+  Type: css
+  Files:
+    - ~/Content/Site.less
+
+Backbone:
+  Type: js
+  Files:
+    - ~/Scripts/Backbone/*.js
+    - ~/Scripts/Extensions/backbone.modelbinding.extension.js
+
+Common:
+  Type: js
+  Files:
+    - ~/Scripts/Common/*.js
+
+Backbone:
+  Type: js
+  Files:
+    - Backbone
+    - ~/Scripts/Extensions/backbone.*.js
+
+jQuery:
+  Type: js
+  Files:
+    - ~/Scripts/jQuery/jQuery-1.6.4.js
+    - ~/Scripts/jQueryExtensions/jquery.unobtrusive-ajax.js
+    - ~/Scripts/jQueryExtensions/jquery.validate.js
+    - ~/Scripts/jQueryExtensions/jquery.validate.unobtrusive.js
+    - ~/Scripts/jQueryUI/jquery.ui.core.js
+    - ~/Scripts/jQueryUI/jquery.ui.widget.js
+    - ~/Scripts/jQueryUI/jquery.ui.mouse.js
+    - ~/Scripts/jQueryUI/jquery.ui.*.js
+    - ~/Scripts/jQueryUI/jquery.effects.core.js
+    - ~/Scripts/jQueryUI/jquery.effects.*.js
+
+Kendo:
+  Type: js
+  Files:
+    - ~/Scripts/Kendo/kendo.core.js
+    - ~/Scripts/Kendo/kendo.model.js
+    - ~/Scripts/Kendo/kendo.fx.js
+    - ~/Scripts/Kendo/kendo.list.js
+    - ~/Scripts/Kendo/kendo.combobox.js
+    - ~/Scripts/Kendo/kendo.dropdownlist.js
+    - ~/Scripts/Kendo/kendo.data.*.js
+    - ~/Scripts/Kendo/kendo.draganddrop.js
+    - ~/Scripts/Kendo/kendo.popup.js
+    - ~/Scripts/Kendo/kendo.pageable.js
+    - ~/Scripts/Kendo/kendo.resizable.js
+    - ~/Scripts/Kendo/kendo.sortable.js
+    - ~/Scripts/Kendo/kendo.selectable.js
+    - ~/Scripts/Kendo/*.js
+
+Linq:
+  Type: js
+  Files:
+    - ~/Scripts/Lib/linq.js
+    - ~/Scripts/Extensions/linq.js
+
+Library:
+  Type: js
+  Files:
+    - ~/Scripts/Lib/globalize.js
+    - ~/Scripts/Lib/globalize.cultures.js
+    - ~/Scripts/Lib/*.js
+    - Linq
+    - jQuery
+    - Kendo

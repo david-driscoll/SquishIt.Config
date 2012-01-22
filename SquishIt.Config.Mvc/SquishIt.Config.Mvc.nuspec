@@ -1,0 +1,19 @@
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<language>en-US</language>
+		<licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+		<projectUrl>https://github.com/david-driscoll/SquishIt.Config</projectUrl>
+		<dependencies>
+			<dependency id="SquishIt.Config" />
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="Controllers\AssetsController.cs.pp" target="Content\Controllers" />
+	</files>
+</package>
