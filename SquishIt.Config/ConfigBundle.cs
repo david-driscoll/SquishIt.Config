@@ -13,8 +13,8 @@ namespace SquishIt.Config
     public class ConfigBundle<T> : ConfigBundle
         where T : SquishIt.Framework.Base.BundleBase<T>
     {
-        private readonly Settings _settings;
-        public ConfigBundle(Settings settings)
+        private readonly SquishItConfigSettings _settings;
+        public ConfigBundle(SquishItConfigSettings settings)
         {
             _settings = settings;
         }
@@ -54,7 +54,7 @@ namespace SquishIt.Config
             ForceBundle(force);
 
             if (cacheMode == SquishItCache.Cached)
-                Bundle.AsCached(key, String.Format("{0)/{1}/{2}", _settings.AssetsPath, extension, key));
+                Bundle.AsCached(key, String.Format("{0}/{1}/{2}", _settings.AssetsPath, extension, key));
             else if (cacheMode == SquishItCache.Named && HttpContext.Current.IsDebuggingEnabled || cacheMode == SquishItCache.NamedDynamic)
                 Bundle.AsNamed(key, String.Format("{0}/{1}.squishit.{2}", path, key, extension));
             else if (cacheMode == SquishItCache.Named && !HttpContext.Current.IsDebuggingEnabled || cacheMode == SquishItCache.NamedStatic)

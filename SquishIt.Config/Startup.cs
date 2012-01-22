@@ -41,13 +41,16 @@ namespace SquishIt.Config
     public class Startup
     {
         private static Startup staticStartup;
-        public readonly Settings Settings;
+        public readonly SquishItConfigSettings Settings;
         private IDictionary<string, ConfigBundle> configBundles;
         private Dictionary<string, bool> mobileKeys;
 
         #region Static Methods
-        public static void Load(Settings settings)
+        public static void Load(SquishItConfigSettings settings = null)
         {
+            if (settings == null)
+                settings = new SquishItConfigSettings() { CacheMode = SquishItCache.Cached };
+
             if (staticStartup == null)
             {
                 staticStartup = new Startup(settings);
@@ -67,7 +70,7 @@ namespace SquishIt.Config
         #endregion
 
         #region Startup
-        public Startup(Settings settings)
+        public Startup(SquishItConfigSettings settings)
         {
             Settings = settings;
             configBundles = new Dictionary<string, ConfigBundle>();

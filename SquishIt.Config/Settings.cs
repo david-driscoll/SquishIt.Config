@@ -7,9 +7,9 @@ using System.IO;
 
 namespace SquishIt.Config
 {
-    public class Settings
+    public class SquishItConfigSettings
     {
-        public Settings()
+        public SquishItConfigSettings()
         {
             LastModified = new Dictionary<string, DateTime>();
             

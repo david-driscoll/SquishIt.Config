@@ -1,0 +1,28 @@
+﻿#---------------------------------------------------------------------#
+#   SquishIt.Config. Sample Config File                                #
+#---------------------------------------------------------------------#
+#  The following file setups up various squishit asset groups.        #
+#  Inspired by the xml config of combres, but also trying to expand   #
+#    upon it and create a highly configurable asset grouping system.  #
+#---------------------------------------------------------------------#
+#  -- File Structure --                                               #
+#  [GroupName]: - The group name, unique per type (css or js)         #
+#    Type: [js|css] - The type this resource group is defined for     #
+#    Files: - The files that are included in this resource group      #
+#               Can be either a file or another resource group.       #
+#      - ~/Scripts/mysite.js - Included a file                        #
+#      - LibraryResources - Include a resource group                  #
+#      - Js-Debug | Js-Release - Signifies javascript for debugging   #
+#          or release. ie Modernizer development vs built package     #
+#    Minify: [true|false] - Toggle minification on or off             #
+#    Mode: [release|debug] - Toggles squishing on or off              #
+#    Cache: [memory|file] - Tells squishit how to cache.              #
+#       Memory uses the HttpRuntimeCache, File is normal squishit     #
+#---------------------------------------------------------------------#
+## Javascript Resources ##
+Library:
+  Type: js
+  Files:
+    - ~/Scripts/modernizr-2.0.6-development-only.js
+    - ~/Scripts/jquery-1.7.1-vsdoc.js
+    - ~/Scripts/jquery-ui-1.8.17.js

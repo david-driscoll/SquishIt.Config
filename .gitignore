@@ -4,5 +4,6 @@ obj
 *.suo
 _ReSharper*
 *.pidb
-test-results/
 *.userprefs
+# Don't include NuGet Packages
+packages/
