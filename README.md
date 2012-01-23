@@ -24,7 +24,10 @@ Your best bet is look at the sample app and play around with it.
 Cache Modes
 -----------
 Cached: Uses the Assets Controller supplied with SquishIt.Config.Mvc, and works very similarly to combres. ( This mode has not been tested against for a while )
+
 Named: Files are cached to the server, and named after the Group Name.  Default behaviour for debug mode is NamedDynamic, when in realese is NamedStatic
+
 NamedDynamic: Files are cached to the server, with a dynamic hash at the end in the script tag.
+
 NamedStatic: Files are cached to the server, with the hash tag in the file name. ( NamedStatic does not currently do any file clean up, so any generated files must be cleared up from time to time )
 
