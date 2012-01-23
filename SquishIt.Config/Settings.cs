@@ -11,8 +11,6 @@ namespace SquishIt.Config
     {
         public SquishItConfigSettings()
         {
-            LastModified = new Dictionary<string, DateTime>();
-            
             var configFiles = Directory.GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.sic.yaml", SearchOption.AllDirectories);
             _configFiles = configFiles.ToList();
         }
@@ -29,7 +27,6 @@ namespace SquishIt.Config
                 value.ForEach(x => { var s = x.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"); if (!_configFiles.Any(z => z == s)) _configFiles.Add(s); });
             }
         }
-        public virtual IDictionary<string, DateTime> LastModified { get; set; }
 
         private string _javaScriptPath = "~/Scripts";
         public virtual string JavaScriptPath

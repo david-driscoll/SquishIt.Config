@@ -36,5 +36,11 @@ namespace TestMvcApplication
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
+
+        protected void Application_BeginRequest()
+        {
+            if (HttpContext.Current.IsDebuggingEnabled)
+                SquishIt.Config.Startup.StaticStartup().Init();
+        }
     }
 }

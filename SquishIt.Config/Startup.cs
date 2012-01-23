@@ -79,60 +79,91 @@ namespace SquishIt.Config
 
         public void Init()
         {
-            var runSetup = false;
-            Settings.ConfigFiles.ForEach(x =>
-            {
-                if (!Settings.LastModified.ContainsKey(x))
-                {
-                    Settings.LastModified.Add(x, File.GetLastWriteTime(x));
-                    runSetup = true;
-                }
-            });
-            if (!runSetup && !Settings.ConfigFiles.Any(x => File.GetLastWriteTime(x) > Settings.LastModified[x]))
+            // Defered execution... so wonderful yet so annoying.
+            // Without ToDictionary this doesnt get called until after the foreach below.
+            var modifiedBundles = configBundles
+                .Where(z => Settings.ConfigFiles.Where(x => x == z.Value.File)
+                    .Any(x => File.GetLastWriteTime(x) > z.Value.LastModified))
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            if (configBundles.Any() && !modifiedBundles.Any())
                 return;
 
-            var updatedBundles = new List<string>();
-
-            foreach (var config in Settings.ConfigFiles.Where(x => runSetup || File.GetLastWriteTime(x) > Settings.LastModified[x]))
+            if (!configBundles.Any() || modifiedBundles.Any())
             {
-                Settings.LastModified[config] = File.GetLastWriteTime(config);
-                var groups = ReadConfig.Read(config);
-                foreach (var group in groups)
+                var modifiedConfigs = modifiedBundles.Select(x => x.Value.File);
+                if (!modifiedConfigs.Any())
+                    modifiedConfigs = Settings.ConfigFiles.AsEnumerable();
+
+                foreach (var config in modifiedConfigs)
                 {
-                    var cacheName = String.Format("{0}-{1}", group.Type, group.Key).ToLower();
+                    var lastModified = File.GetLastWriteTime(config);
+                    var groups = ReadConfig.Read(config);
+                    foreach (var group in groups)
+                    {
+                        var cacheName = String.Format("{0}-{1}", group.Type, group.Key).ToLower();
 
-                    if (group.Type == SquishItType.Css)
-                    {
-                        LoadAddConfigBundle<CSSBundle>(cacheName, group, Bundle.Css());
+                        if (group.Type == SquishItType.Css)
+                        {
+                            LoadAddConfigBundle<CSSBundle>(cacheName, group, Bundle.Css());
+                        }
+                        else if (group.Type == SquishItType.JavaScript)
+                        {
+                            LoadAddConfigBundle<JavaScriptBundle>(cacheName, group, Bundle.JavaScript());
+                        }
+                        configBundles[cacheName].LastModified = lastModified;
+                        configBundles[cacheName].File = config;
                     }
-                    else if (group.Type == SquishItType.JavaScript)
-                    {
-                        LoadAddConfigBundle<JavaScriptBundle>(cacheName, group, Bundle.JavaScript());
-                    }
-                    updatedBundles.Add(cacheName);
                 }
+
+                IDictionary<string, ConfigBundle> effectedBundles = null;
+                if (!modifiedBundles.Any())
+                {
+                    effectedBundles = configBundles;
+                }
+                else if (modifiedBundles.Count() != configBundles.Count())
+                {
+                    // search all configBundles for modified bundle keys
+                    effectedBundles = configBundles
+                        .Where(x => modifiedBundles
+                            .Any(z => x.Value.BundledFiles.Any(c => c.ToLower() == z.Key))
+                        )
+                        .ToDictionary(x => x.Key, x => x.Value);
+                    effectedBundles.ForEach(x =>
+                    {
+                        if (x.Value.Config.Type == SquishItType.Css)
+                            (x.Value as ConfigBundle<CSSBundle>).Bundle = Bundle.Css();
+                        else if (x.Value.Config.Type == SquishItType.JavaScript)
+                            (x.Value as ConfigBundle<JavaScriptBundle>).Bundle = Bundle.JavaScript();
+                    });
+                    effectedBundles = effectedBundles
+                        .Union(modifiedBundles
+                            .Where(x => !effectedBundles.ContainsKey(x.Key)))
+                        .ToDictionary(x => x.Key, x=> x.Value);
+                }
+
+                //Bundle.Css().ClearGroupBundlesCache();
+                //Bundle.JavaScript().ClearGroupBundlesCache();
+                Bundle.Css().ClearCache();
+                Bundle.JavaScript().ClearCache();
+
+                var keys = new List<string>();
+                foreach (DictionaryEntry c in HttpRuntime.Cache)
+                    if (c.Key is string)
+                        keys.Add(c.Key as string);
+                keys.ForEach(x => HttpRuntime.Cache.Remove(x));
+
+                foreach (var bundle in effectedBundles)
+                {
+                    if (bundle.Value is ConfigBundle<JavaScriptBundle>)
+                        LoadIntoBundle<JavaScriptBundle>(bundle);
+                    else if (bundle.Value is ConfigBundle<CSSBundle>)
+                        LoadIntoBundle<CSSBundle>(bundle);
+                }
+
+                Startup.UpdateBundles(configBundles);
             }
 
-            //Bundle.Css().ClearGroupBundlesCache();
-            //Bundle.JavaScript().ClearGroupBundlesCache();
-            Bundle.Css().ClearCache();
-            Bundle.JavaScript().ClearCache();
-
-            var keys = new List<string>();
-            foreach (DictionaryEntry c in HttpRuntime.Cache)
-                if (c.Key is string)
-                    keys.Add(c.Key as string);
-            keys.ForEach(x => HttpRuntime.Cache.Remove(x));
-
-            foreach (var bundle in configBundles.Where(x => updatedBundles.Any(z => x.Key == z)))
-            {
-                if (bundle.Value is ConfigBundle<JavaScriptBundle>)
-                    LoadIntoBundle<JavaScriptBundle>(bundle);
-                else if (bundle.Value is ConfigBundle<CSSBundle>)
-                    LoadIntoBundle<CSSBundle>(bundle);
-            }
-
-            Startup.UpdateBundles(configBundles);
         }
 
         private void LoadAddConfigBundle<T>(string cacheName, GroupConfig group, BundleBase<T> bundle)

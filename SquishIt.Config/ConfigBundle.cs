@@ -117,6 +117,8 @@ namespace SquishIt.Config
             }
         }
         public virtual bool IsCached { get; set; }
+        public virtual DateTime LastModified { get; set; }
+        public virtual string File { get; set; }
 
         #region Bundled Files
         private string[] FindFiles(string path)
@@ -163,7 +165,7 @@ namespace SquishIt.Config
 
             if (value != null && value != String.Empty)
             {
-                var fileExists = File.Exists(value.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
+                var fileExists = System.IO.File.Exists(value.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
                 if (!fileExists)
                 {
                     value = String.Format("{0}-{1}", Config.Type, value);
