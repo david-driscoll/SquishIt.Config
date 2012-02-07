@@ -16,6 +16,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SquishIt.Config\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,7 +39,8 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>SquishIt.Config.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AjaxMin">
@@ -211,9 +213,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SquishIt.Config.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SquishIt.Config.Mvc\SquishIt.Config.Mvc.Unsigned.csproj">
