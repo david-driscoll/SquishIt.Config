@@ -1,7 +1,6 @@
 using System;
 using SquishIt.Config;
 using System.Web;
-using TestMvcApplication;
 [assembly: WebActivator.PreApplicationStartMethod(typeof($rootnamespace$.App_Start.SquishItConfigStartup), "PreStart")]
 namespace $rootnamespace$.App_Start
 {
