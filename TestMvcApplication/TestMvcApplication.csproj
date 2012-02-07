@@ -34,6 +34,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>SquishIt.Config.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AjaxMin">
       <HintPath>..\packages\AjaxMin.4.42.4387.23950\lib\net20\AjaxMin.dll</HintPath>
@@ -204,17 +210,20 @@
     <Compile Include="App_Start\SquishitConfig.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SquishIt.Config.Mvc\SquishIt.Config.Mvc.csproj">
-      <Project>{AAF2C5D0-9AD9-43C5-9043-5539160F1053}</Project>
-      <Name>SquishIt.Config.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SquishIt.Config\Squishit.Config.csproj">
-      <Project>{EA00A45E-8D7F-469B-80BF-9E859B4FC96C}</Project>
-      <Name>Squishit.Config</Name>
-    </ProjectReference>
+    <Content Include="Views\Shared\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\Index.cshtml" />
+    <None Include="SquishIt.Config.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SquishIt.Config.Mvc\SquishIt.Config.Mvc.Unsigned.csproj">
+      <Project>{5D00EDC0-ED19-4211-9E4D-BC46179F409E}</Project>
+      <Name>SquishIt.Config.Mvc.Unsigned</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SquishIt.Config\Squishit.Config.Unsigned.csproj">
+      <Project>{6B3A1DFC-0BAD-40D0-8D1B-CEB088F1E077}</Project>
+      <Name>Squishit.Config.Unsigned</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
