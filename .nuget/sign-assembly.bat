@@ -1,11 +1,11 @@
-@echo off
+rem @echo off
 if "%1"=="" goto end
 if not exist %1 goto end
 if exist %1.signed goto end
 set ildasm="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\ildasm.exe"
 set sn="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\sn.exe"
-if not exist "C:\Program Files (x86)" set ildasm="C:\Program Files\Microsoft SDKs\Windows\v7.0A\Bin\ildasm.exe" end
-if not exist "C:\Program Files (x86)" set sn="C:\Program Files\Microsoft SDKs\Windows\v7.0A\Bin\sn.exe" end
+if not exist "C:\Program Files (x86)" set ildasm="C:\Program Files\Microsoft SDKs\Windows\v7.0A\Bin\ildasm.exe"
+if not exist "C:\Program Files (x86)" set sn="C:\Program Files\Microsoft SDKs\Windows\v7.0A\Bin\sn.exe"
 set ilasm="%windir%\Microsoft.NET\Framework\v4.0.30319\ilasm.exe"
 echo Renaming original DLL...
 move %1 %1.unsigned
