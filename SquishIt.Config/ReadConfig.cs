@@ -80,6 +80,7 @@ namespace SquishIt.Config
                         Mode = squishitMode,
                         Type = configType,
                         Key = key,
+                        DisableCache = cache == "disable",
                     });
             }
 

@@ -18,5 +18,6 @@ namespace SquishIt.Config
         public virtual bool Minify { get; set; }
         public virtual SquishItForce Mode { get; set; }
         public virtual SquishItCache Cache { get; set; }
+        public virtual bool DisableCache { get; set; }
     }
 }

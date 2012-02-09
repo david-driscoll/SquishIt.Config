@@ -13,7 +13,4 @@
 			<dependency id="SquishIt.Config" />
 		</dependencies>
 	</metadata>
-	<files>
-		<file src="Controllers\AssetsController.cs.pp" target="Content\Controllers" />
-	</files>
 </package>

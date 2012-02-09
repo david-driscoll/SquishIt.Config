@@ -11,7 +11,7 @@
 		<projectUrl>https://github.com/david-driscoll/SquishIt.Config</projectUrl>
 		<dependencies>
 			<dependency id="WebActivator" />
-			<dependency id="SquishIt" />
+			<dependency id="SquishIt" version="0.8.5"  />
 		</dependencies>
 	</metadata>
 	<files>

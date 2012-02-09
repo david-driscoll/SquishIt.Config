@@ -33,27 +33,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>SquishIt.Config.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AjaxMin">
-      <HintPath>packages\AjaxMin.4.42.4387.23950\lib\net20\AjaxMin.dll</HintPath>
+      <HintPath>..\packages\AjaxMin.4.42.4387.23950\lib\net20\AjaxMin.dll</HintPath>
     </Reference>
     <Reference Include="dotless.Core">
-      <HintPath>packages\dotless.1.2.2.0\lib\dotless.Core.dll</HintPath>
+      <HintPath>..\packages\dotless.1.2.2.0\lib\dotless.Core.dll</HintPath>
     </Reference>
     <Reference Include="EcmaScript.NET.modified">
-      <HintPath>packages\YUICompressor.NET.1.6.0.2\lib\net35\EcmaScript.NET.modified.dll</HintPath>
+      <HintPath>..\packages\YUICompressor.NET.1.6.0.2\lib\net35\EcmaScript.NET.modified.dll</HintPath>
     </Reference>
     <Reference Include="Jurassic">
-      <HintPath>packages\Jurassic.2.1.1\lib\Jurassic.dll</HintPath>
+      <HintPath>..\packages\Jurassic.2.1.1\lib\Jurassic.dll</HintPath>
     </Reference>
-    <Reference Include="SquishIt.Framework, Version=0.8.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SquishIt.0.8.5\lib\SquishIt.Framework.dll</HintPath>
+    <Reference Include="SquishIt, Version=0.8.5.0, Culture=neutral, PublicKeyToken=e3c64ccfe5c4ef9c, processorArchitecture=MSIL">
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\packages\SquishIt.0.8.5.0\lib\net35\SquishIt.exe</HintPath>
+    </Reference>
+    <Reference Include="SquishIt.Framework, Version=0.8.5.0, Culture=neutral, PublicKeyToken=255582e0cec0a849, processorArchitecture=MSIL">
+      <HintPath>..\packages\SquishIt.0.8.5.0\lib\net35\SquishIt.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,7 +68,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Yahoo.Yui.Compressor">
-      <HintPath>packages\YUICompressor.NET.1.6.0.2\lib\net35\Yahoo.Yui.Compressor.dll</HintPath>
+      <HintPath>..\packages\YUICompressor.NET.1.6.0.2\lib\net35\Yahoo.Yui.Compressor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -114,15 +117,14 @@
     <Compile Include="Yaml\TextParserCommon.cs" />
     <Compile Include="Yaml\YamlParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="SquishIt.Config.nuspec" />
+    <None Include="packages.config" />
+    <None Include="SquishIt.Config.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SquishIt.Config.snk" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Start\SquishitConfig.cs.pp" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="squishit.sic.yaml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

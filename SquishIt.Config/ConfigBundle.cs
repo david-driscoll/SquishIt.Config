@@ -25,7 +25,7 @@ namespace SquishIt.Config
         {
             var bundle = Bundle as T;
 
-            if (!IsCached)
+            if (!IsCached || Config.DisableCache)
                 CacheBundle(force);
             return RenderBundle();
         }
@@ -120,6 +120,13 @@ namespace SquishIt.Config
         public virtual DateTime LastModified { get; set; }
         public virtual string File { get; set; }
 
+        public bool IsModified()
+        {
+            if (BundledFiles.Any(x => LastModifiedBundledFiles[x] < System.IO.File.GetLastWriteTime(x.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"))))
+                return true;
+            return LastModified < System.IO.File.GetLastWriteTime(File);
+        }
+
         #region Bundled Files
         private string[] FindFiles(string path)
         {
@@ -197,7 +204,26 @@ namespace SquishIt.Config
                         AddFile(file);
                     }
                 }
+                lastModifiedFiles = null;
                 return files;
+            }
+        }
+
+        private Dictionary<string, DateTime> lastModifiedFiles;
+        public virtual IDictionary<string, DateTime> LastModifiedBundledFiles
+        {
+            get
+            {
+                if (lastModifiedFiles == null)
+                    lastModifiedFiles = new Dictionary<string, DateTime>();
+                foreach (var file in BundledFiles)
+                {
+                    if (!lastModifiedFiles.ContainsKey(file))
+                    {
+                        lastModifiedFiles[file] = System.IO.File.GetLastWriteTime(file.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
+                    }
+                }
+                return lastModifiedFiles;
             }
         }
         #endregion

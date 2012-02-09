@@ -60,6 +60,10 @@ namespace SquishIt.Config
 
         public static Startup StaticStartup()
         {
+            if (staticStartup == null)
+            {
+                Startup.Load();
+            }
             return staticStartup;
         }
 
@@ -82,8 +86,7 @@ namespace SquishIt.Config
             // Defered execution... so wonderful yet so annoying.
             // Without ToDictionary this doesnt get called until after the foreach below.
             var modifiedBundles = configBundles
-                .Where(z => Settings.ConfigFiles.Where(x => x == z.Value.File)
-                    .Any(x => File.GetLastWriteTime(x) > z.Value.LastModified))
+                .Where(z => Settings.ConfigFiles.Any(x => z.Value.IsModified()))
                 .ToDictionary(x => x.Key, x => x.Value);
 
             if (configBundles.Any() && !modifiedBundles.Any())
@@ -139,7 +142,7 @@ namespace SquishIt.Config
                     effectedBundles = effectedBundles
                         .Union(modifiedBundles
                             .Where(x => !effectedBundles.ContainsKey(x.Key)))
-                        .ToDictionary(x => x.Key, x=> x.Value);
+                        .ToDictionary(x => x.Key, x => x.Value);
                 }
 
                 //Bundle.Css().ClearGroupBundlesCache();
