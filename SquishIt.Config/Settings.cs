@@ -1,19 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using SquishIt.Config.Extensions;
 using System.IO;
+using System.Reflection;
 
 namespace SquishIt.Config
 {
     public class SquishItConfigSettings
     {
-        public SquishItConfigSettings()
+        public SquishItConfigSettings(bool ignoreEmbedded = false)
         {
             var configFiles = Directory.GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.sic.yaml", SearchOption.AllDirectories);
             _configFiles = configFiles.ToList();
+            FileFilters = new List<string>() { ".qunit.js", ".junit.js" };
+
+            if (!ignoreEmbedded)
+            {
+                assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic);
+                foreach (var assembly in assemblies)
+                {
+                    var configs = assembly.GetManifestResourceNames().Where(x => x.EndsWith(".sic.embedded.yaml"));
+                    if (configs.Count() > 0)
+                        foreach (var c in configs)
+                            _configFiles.Add(String.Format("{0}://{1}", assembly.GetName().Name, c));
+                }
+            }
         }
+
+        public readonly IEnumerable<Assembly> assemblies;
+
+        public virtual IList<string> FileFilters { get; set; }
 
         private IList<string> _configFiles;
         public virtual string[] ConfigFiles
@@ -71,5 +90,6 @@ namespace SquishIt.Config
         public virtual string AssetsRelativePath { get { return _assetsPath.Substring(1); } }
 
         public virtual SquishItCache CacheMode { get; set; }
+        public virtual bool UseCDN { get; set; }
     }
 }

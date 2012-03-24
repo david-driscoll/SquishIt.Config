@@ -7,16 +7,16 @@ using System.IO;
 using System.Web;
 using SquishIt.Config.Extensions;
 using SquishIt.Framework.JavaScript;
+using System.Text.RegularExpressions;
 
 namespace SquishIt.Config
 {
     public class ConfigBundle<T> : ConfigBundle
         where T : SquishIt.Framework.Base.BundleBase<T>
     {
-        private readonly SquishItConfigSettings _settings;
         public ConfigBundle(SquishItConfigSettings settings)
+            : base(settings)
         {
-            _settings = settings;
         }
 
         public virtual BundleBase<T> Bundle { get; set; }
@@ -27,7 +27,13 @@ namespace SquishIt.Config
 
             if (!IsCached || Config.DisableCache)
                 CacheBundle(force);
-            return RenderBundle();
+            var returnTags = RenderBundle();
+            if (returnTags == String.Empty)
+            {
+                CacheBundle(force);
+                returnTags = RenderBundle();
+            }
+            return returnTags;
         }
 
         private SquishItCache GetCacheMode()
@@ -98,8 +104,11 @@ namespace SquishIt.Config
 
     public class ConfigBundle
     {
-        public ConfigBundle()
+        protected readonly SquishItConfigSettings _settings;
+        public static Regex Url = new Regex("(http|https)://", RegexOptions.Compiled);
+        public ConfigBundle(SquishItConfigSettings settings)
         {
+            _settings = settings;
         }
 
         public virtual string Name { get; set; }
@@ -122,9 +131,14 @@ namespace SquishIt.Config
 
         public bool IsModified()
         {
-            if (BundledFiles.Any(x => LastModifiedBundledFiles[x] < System.IO.File.GetLastWriteTime(x.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"))))
+            if (BundledFiles.Any(x =>
+                {
+                    var fileName = x.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\");
+                    return !this.Config.Embedded && !Url.Match(x).Success && System.IO.File.Exists(fileName) && LastModifiedBundledFiles[x] < System.IO.File.GetLastWriteTime(fileName);
+                }
+            ))
                 return true;
-            return LastModified < System.IO.File.GetLastWriteTime(File);
+            return LastModified < (this.File.Contains("://") ? DateTime.MinValue : System.IO.File.GetLastWriteTime(File));
         }
 
         #region Bundled Files
@@ -144,43 +158,68 @@ namespace SquishIt.Config
 
             if (path != null && path != String.Empty)
             {
+                if (this.Config.Embedded)
+                    throw new NotSupportedException("File wild cards are not supported with Embedded scripts");
                 var physicalPath = path.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory);
                 physicalPath = physicalPath.Substring(0, physicalPath.LastIndexOf("/")).Replace("/", "\\");
 
                 var extension = path.Substring(path.LastIndexOf("/") + 1);
-                var files = Directory.GetFiles(physicalPath, extension, searchOptions).Where(x => !x.EndsWith("vsdoc.js") && !x.EndsWith(".qunit.js"));
+                var files = Directory.GetFiles(physicalPath, extension, searchOptions).Where(x => !x.EndsWith("vsdoc.js"));
 
                 var virtualFiles = new List<string>();
                 foreach (var file in files)
                 {
-                    virtualFiles.Add(file.Replace(System.AppDomain.CurrentDomain.BaseDirectory, "~/").Replace("\\", "/"));
+                    var pass = true;
+                    foreach (var filter in _settings.FileFilters)
+                    {
+                        if (file.EndsWith(filter))
+                            pass = false;
+                    }
+                    if (pass)
+                        virtualFiles.Add(file.Replace(System.AppDomain.CurrentDomain.BaseDirectory, "~/").Replace("\\", "/"));
                 }
                 return virtualFiles.ToArray();
             }
             return new string[] { };
         }
 
+        public bool EmbeddedFileExists(string file)
+        {
+            var assemblyName = this.Config.Assembly;
+            var assembly = _settings.assemblies.SingleOrDefault(x => x.GetName().Name == assemblyName);
+            var resourceName = assemblyName + file.Replace("~", "").Replace("/", ".");
+            return assembly.GetManifestResourceNames().Any(x => x.ToLower() == resourceName.ToLower());
+        }
+
         private void AddFile(string value)
         {
-            if (value.Contains("|"))
-            {
-                if (HttpContext.Current.IsDebuggingEnabled)
-                    value = value.Substring(0, value.IndexOf("|")).Trim();
-                else
-                    value = value.Substring(value.IndexOf("|") + 1).Trim();
-            }
-
             if (value != null && value != String.Empty)
             {
-                var fileExists = System.IO.File.Exists(value.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
-                if (!fileExists)
-                {
-                    value = String.Format("{0}-{1}", Config.Type, value);
-                }
-
-                if (!files.Any(x => x == value))
+                var isHtml = Url.Match(value).Success;
+                if (isHtml)
                 {
                     files.Add(value);
+                }
+                else
+                {
+                    if (value.Contains("|"))
+                    {
+                        if (HttpContext.Current.IsDebuggingEnabled)
+                            value = value.Substring(0, value.IndexOf("|")).Trim();
+                        else
+                            value = value.Substring(value.IndexOf("|") + 1).Trim();
+                    }
+
+                    var fileExists = System.IO.File.Exists(value.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
+                    if ((!this.Config.Embedded && !fileExists) || (this.Config.Embedded && !this.EmbeddedFileExists(value)))
+                    {
+                        value = String.Format("{0}-{1}", Config.RealType, value);
+                    }
+
+                    if (!files.Any(x => x == value))
+                    {
+                        files.Add(value);
+                    }
                 }
             }
         }
@@ -195,7 +234,7 @@ namespace SquishIt.Config
                 files = new List<string>();
                 foreach (var file in Config.Files)
                 {
-                    if (file.Contains("*"))
+                    if (!this.Config.Embedded && file.Contains("*"))
                     {
                         FindFiles(file).ForEach(x => AddFile(x));
                     }
@@ -218,9 +257,10 @@ namespace SquishIt.Config
                     lastModifiedFiles = new Dictionary<string, DateTime>();
                 foreach (var file in BundledFiles)
                 {
-                    if (!lastModifiedFiles.ContainsKey(file))
+                    var f = file.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\");
+                    if (!lastModifiedFiles.ContainsKey(file) && !Url.Match(file).Success && System.IO.File.Exists(f))
                     {
-                        lastModifiedFiles[file] = System.IO.File.GetLastWriteTime(file.Replace("~/", System.AppDomain.CurrentDomain.BaseDirectory).Replace("/", "\\"));
+                        lastModifiedFiles[file] = this.Config.Embedded ? DateTime.MinValue : System.IO.File.GetLastWriteTime(f);
                     }
                 }
                 return lastModifiedFiles;

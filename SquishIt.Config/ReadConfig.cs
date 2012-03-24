@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SquishIt.Config.Yaml.Grammar;
+using System.IO;
 
 namespace SquishIt.Config
 {
@@ -10,7 +11,48 @@ namespace SquishIt.Config
     {
         public static IEnumerable<GroupConfig> Read(string file)
         {
-            var yaml = YamlParser.Load(file);
+            YamlStream yaml = null;
+            var replacedTabs = false;
+            while (yaml == null)
+            {
+                try
+                {
+                    if (file.Contains("://"))
+                    {
+                        var split = file.Split(new[] { "://" }, StringSplitOptions.None);
+                        var assemblyName = split.ElementAt(0);
+                        var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == assemblyName);
+                        var resourceName = split.ElementAt(1);
+                        using (var stream = assembly.GetManifestResourceStream(resourceName))
+                        {
+                            if (stream == null) throw new InvalidOperationException(String.Format("Embedded resource not found: {0}", file));
+
+                            string contents;
+                            using (var sr = new StreamReader(stream))
+                            {
+                                contents = sr.ReadToEnd();
+                            }
+                            TextInput input = new TextInput(contents);
+                            YamlParser parser = new YamlParser();
+                            bool success;
+                            yaml = parser.ParseYamlStream(input, out success);
+                            if (!success)
+                                throw new Exception(String.Format("Could not parse embedded YAML file \"{0}\"", file));
+                        }
+                    }
+                    else
+                    {
+                        yaml = YamlParser.Load(file);
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (replacedTabs)
+                        throw new Exception(String.Format("Could not parse YAML file \"{0}\"", file), e);
+                    File.WriteAllLines(file, File.ReadAllLines(file).Select(x => x.Replace('\t'.ToString(), "    ").Replace('\u0009'.ToString(), "    ")));
+                    replacedTabs = true;
+                }
+            }
 
             var listConfigGroup = new List<GroupConfig>();
 
@@ -45,6 +87,13 @@ namespace SquishIt.Config
                 if (cacheScalar != null)
                     cache = (cacheScalar.Value as Scalar).Text.ToLower();
 
+                var assemblyScalar = ((entry.Value as Mapping).Enties.Where(x =>
+                        x.Key.ToString().ToLower() == "assembly"
+                    ).FirstOrDefault());
+                string assembly = null;
+                if (assemblyScalar != null)
+                    assembly = (assemblyScalar.Value as Scalar).Text;
+
                 var key = entry.Key.ToString();
 
                 var c = SquishItCache.Unset;
@@ -71,6 +120,11 @@ namespace SquishIt.Config
                     configType = SquishItType.Css;
                 if (type == "js")
                     configType = SquishItType.JavaScript;
+                if (type == "embedded-css")
+                    configType = SquishItType.EmbeddedCss;
+                if (type == "embedded-js")
+                    configType = SquishItType.EmbeddedJavaScript;
+
 
                 listConfigGroup.Add(new GroupConfig()
                     {
@@ -80,6 +134,7 @@ namespace SquishIt.Config
                         Mode = squishitMode,
                         Type = configType,
                         Key = key,
+                        Assembly = assembly,
                         DisableCache = cache == "disable",
                     });
             }

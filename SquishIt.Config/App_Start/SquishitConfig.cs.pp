@@ -40,8 +40,7 @@ namespace $rootnamespace$
         /// </summary>
         void OnBeginRequest(object sender, EventArgs e)
         {
-            if (HttpContext.Current.IsDebuggingEnabled)
-                SquishIt.Config.Startup.StaticStartup().Init();
+            SquishIt.Config.Startup.StaticStartup().Init();
         }
 
         /// <summary>
